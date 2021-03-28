@@ -12,7 +12,7 @@ def date_to_interval(date_obj: pd.Series):
     date = pd.to_datetime(date_obj).copy()
     interval = date.diff()
     interval[1:] = interval[1:].dt.total_seconds() // 60
-    interval[0] = int(interval.mean())
+    interval[0] = int(interval.mode())
     interval.name = 'Interval'
     return interval
 
