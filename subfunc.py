@@ -66,4 +66,4 @@ def plot_feature_importance(model, data, target_index, title):
 
 
 def normalize_data(data):
-    return data.apply(lambda col: (col - col.min()) / (col.max - col.min()))
+    return data.apply(lambda col: (col - col.min()) / (col.max() - col.min()))
