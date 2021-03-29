@@ -60,7 +60,8 @@ def plot_feature_importance(model, data, target_index, title):
     feat_importance = pd.Series(feature_importance, index=data.columns)
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
-    plt.savefig('/source' + title)
+    plt.savefig(f'source/{title}.png')
+
 
 def normalize_data(data):
     return data.apply(lambda col: (col - col.min()) / (col.max() - col.min())
