@@ -63,3 +63,7 @@ def plot_feature_importance(model, data, target_index, title):
     plt.barh(pos, feature_importance[sorted_idx], align='center')
     plt.yticks(pos, np.array(data.columns)[sorted_idx])
     plt.title(title)
+
+
+def normalize_data(data):
+    return data.apply(lambda col: (col - col.min()) / (col.max - col.min()))
