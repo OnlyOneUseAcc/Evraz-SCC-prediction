@@ -56,14 +56,10 @@ def mean_filling(data: pd.DataFrame, usefull_list, group_list):
 
 def plot_feature_importance(model, data, target_index, title):
     feature_importance = model.estimators_[target_index].feature_importances_
-    sorted_idx = np.argsort(feature_importance)
-    pos = np.arange(sorted_idx.shape[0]) + .5
-    fig = plt.figure(figsize=(25, 50))
-    plt.subplot(1, 2, 1)
-    plt.barh(pos, feature_importance[sorted_idx], align='center')
-    plt.yticks(pos, np.array(data.columns)[sorted_idx])
+    feat_importance = pd.Series(feature_importance, index=data.columns)
+    feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
-
+    plt.savefig('/source' + title)
 
 def normalize_data(data):
     return data.apply(lambda col: (col - col.min()) / (col.max() - col.min())
