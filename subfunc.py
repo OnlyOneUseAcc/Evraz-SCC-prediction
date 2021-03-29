@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
 from itertools import combinations
 
 
@@ -44,10 +46,20 @@ def mean_filling(data: pd.DataFrame, usefull_list, group_list):
 
     for count in range(1, len(group_list)):
         for comb in combinations(group_list, count):
-
             full_data[usefull_list] = full_data.groupby(list(comb))[usefull_list].transform(
                 lambda column: column.fillna(column.mean()))
 
     full_data = full_data.fillna(full_data.mean(axis=0))
 
     return full_data
+
+
+def plot_feature_importance(model, data, target_index, title):
+    feature_importance = model.estimators_[target_index].feature_importances_
+    sorted_idx = np.argsort(feature_importance)
+    pos = np.arange(sorted_idx.shape[0]) + .5
+    fig = plt.figure(figsize=(25, 50))
+    plt.subplot(1, 2, 1)
+    plt.barh(pos, feature_importance[sorted_idx], align='center')
+    plt.yticks(pos, np.array(data.columns)[sorted_idx])
+    plt.title(title)
