@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 from itertools import combinations
+import pickle
 
 
 def replace_comma(data: pd.DataFrame):
@@ -67,7 +68,7 @@ def plot_feature_importance(model, data, target_index, title):
 
 def normalize_data(data):
     return data.apply(lambda col: (col - col.min()) / (col.max() - col.min())
-            if (col.max() - col.min()) != 0 else col.max())
+    if (col.max() - col.min()) != 0 else col.max())
 
 
 def remove_noises(data):
@@ -79,3 +80,30 @@ def remove_noises(data):
         clear_data = clear_data.drop(noise_indexes, axis='index')
 
     return clear_data
+
+
+def show_result(predicted, target, path):
+    t_columns = target.columns
+    target = target.to_numpy()
+    for i in range(predicted.shape[1]):
+        plt.figure(figsize=(50, 10))
+        plt.title(t_columns[i])
+        plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
+                 target[::10, i], c='b', label='Целевая'
+                 )
+
+        plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
+                 predicted[::10, i], c='g', label='Предсказанная')
+        plt.legend()
+        plt.savefig(f'{path}{i}.png')
+
+
+def multi_model_save(model):
+    with open('model/model.pkl', 'wb') as f:
+        pickle.dump(model, f)
+
+
+def multi_model_load():
+    with open('model/model.pkl', 'rb') as f:
+        model = pickle.load(f)
+    return model
