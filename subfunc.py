@@ -66,15 +66,16 @@ def plot_feature_importance(model, data, target_index, title):
 
 
 def normalize_data(data):
-    return data.apply(lambda col: (col - col.min()) / (col.max() - col.min()))
+    return data.apply(lambda col: (col - col.min()) / (col.max() - col.min())
+            if (col.max() - col.min()) != 0 else col.max())
 
 
 def remove_noises(data):
     clear_data = data.copy()
     for col in clear_data:
-        std = col.std()
-        mean = col.mean()
-        noise_indexes = col[abs(col) > (mean + 3 * std)].index
+        std = clear_data[col].std()
+        mean = clear_data[col].mean()
+        noise_indexes = clear_data[col][abs(clear_data[col]) > (mean + 3 * std)].index
         clear_data = clear_data.drop(noise_indexes, axis='index')
 
     return clear_data
