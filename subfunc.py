@@ -63,6 +63,7 @@ def plot_feature_importance(model, data, target_index, title):
     plt.savefig(f'source/{title}.png')
 
 
+
 def normalize_data(data):
     return data.apply(lambda col: (col - col.min()) / (col.max() - col.min())
     if (col.max() - col.min()) != 0 else col.max())
@@ -79,7 +80,7 @@ def remove_noises(data):
     return clear_data
 
 
-def show_result(predicted, target, path):
+def show_result(predicted, target, path=None):
     t_columns = target.columns
     target = target.to_numpy()
     for i in range(predicted.shape[1]):
@@ -92,7 +93,9 @@ def show_result(predicted, target, path):
         plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
                  predicted[::10, i], c='g', label='Предсказанная')
         plt.legend()
-        plt.savefig(f'{path}{i}.png')
+
+        if path is not None:
+            plt.savefig(f'{path}{i}.png')
 
 
 def multi_model_save(model):
