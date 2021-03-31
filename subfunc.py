@@ -36,7 +36,7 @@ def drop_rows(data: pd.DataFrame, threshold=0.35):
     nan_count_per_row = data.isnull().sum(axis=1)
     indexes_to_delete = []
     for index in nan_count_per_row.index:
-        if nan_count_per_row.iloc[index] / data.shape[1] > threshold:
+        if nan_count_per_row.loc[index] / data.shape[1] > threshold:
             indexes_to_delete.append(index)
 
     return data.drop(indexes_to_delete, axis='index')
