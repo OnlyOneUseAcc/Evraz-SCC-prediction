@@ -4,6 +4,8 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
 
+from impyute.imputation.cs import mice
+
 
 def replace_comma(data: pd.DataFrame):
     data = data.apply(lambda x: x.apply(str).str.replace(',', '.'))
@@ -79,7 +81,7 @@ def remove_noises(data):
     return clear_data
 
 
-def show_result(predicted, target, path):
+def show_result(predicted, target, path=None):
     t_columns = target.columns
     target = target.to_numpy()
     for i in range(predicted.shape[1]):
@@ -92,7 +94,9 @@ def show_result(predicted, target, path):
         plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
                  predicted[::10, i], c='g', label='Предсказанная')
         plt.legend()
-        plt.savefig(f'{path}{i}.png')
+
+        if path is not None:
+            plt.savefig(f'{path}{i}.png')
 
 
 def multi_model_save(model):
@@ -104,3 +108,14 @@ def multi_model_load():
     with open('model/model.pkl', 'rb') as f:
         model = pickle.load(f)
     return model
+
+
+def fill_empty_values(data: pd.DataFrame):
+    imputed_training = mice(data.values)
+    empty_mask = data.isna()
+    data_array = data.values
+    data_array[empty_mask] = imputed_training[empty_mask]
+    print(data_array)
+    return pd.DataFrame(data_array,
+                        columns=data.columns,
+                        index=data.index)
