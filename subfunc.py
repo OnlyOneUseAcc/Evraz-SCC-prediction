@@ -4,6 +4,8 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
 
+from impyute.imputation.cs import mice
+
 
 def replace_comma(data: pd.DataFrame):
     data = data.apply(lambda x: x.apply(str).str.replace(',', '.'))
@@ -55,9 +57,10 @@ def mean_filling(data: pd.DataFrame, usefull_list, group_list):
     return full_data
 
 
-def plot_feature_importance(model, data, target_index, title):
-    feature_importance = model.estimators_[target_index].feature_importances_
+def plot_feature_importance(model, data, title):
+    feature_importance = model.feature_importances_
     feat_importance = pd.Series(feature_importance, index=data.columns)
+    plt.figure(figsize=(10, 5))
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
     plt.savefig(f'source/{title}.png')
@@ -79,7 +82,7 @@ def remove_noises(data):
     return clear_data
 
 
-def show_result(predicted, target, path):
+def show_result(predicted, target, path=None):
     t_columns = target.columns
     target = target.to_numpy()
     for i in range(predicted.shape[1]):
@@ -92,15 +95,49 @@ def show_result(predicted, target, path):
         plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
                  predicted[::10, i], c='g', label='Предсказанная')
         plt.legend()
-        plt.savefig(f'{path}{i}.png')
+
+        if path is not None:
+            plt.savefig(f'{path}{i}.png')
 
 
-def multi_model_save(model):
-    with open('model/model.pkl', 'wb') as f:
-        pickle.dump(model, f)
+def multi_model_save(models):
+    for target in models.keys():
+        with open(f'model/{target}.pkl', 'wb') as f:
+            pickle.dump(models[target], f)
 
 
 def multi_model_load():
     with open('model/model.pkl', 'rb') as f:
         model = pickle.load(f)
     return model
+
+
+def fill_empty_values(data: pd.DataFrame):
+    imputed_training = mice(data.values)
+    empty_mask = data.isna()
+    data_array = data.values
+    data_array[empty_mask] = imputed_training[empty_mask]
+    print(data_array)
+    return pd.DataFrame(data_array,
+                        columns=data.columns,
+                        index=data.index)
+
+
+def select_target(X_train, X_test, y_train, y_test):
+
+    X_train_dataset = {}
+    X_test_dataset = {}
+    y_train_dataset = {}
+    y_test_dataset = {}
+    X_test[y_test.columns] = y_test
+    X_train[y_train.columns] = y_train
+    combs = combinations(y_train.columns, 3)
+
+    for comb in combs:
+        target = list(set(y_train.columns) - set(comb))[0]
+        y_train_dataset[target] = y_train[target]
+        y_test_dataset[target] = y_test[target]
+        X_test_dataset[target] = X_test.drop(columns = target)
+        X_train_dataset[target] = X_train.drop(columns = target)
+
+    return X_train_dataset, X_test_dataset, y_train_dataset, y_test_dataset
