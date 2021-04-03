@@ -30,14 +30,14 @@
 * Мы обучали 4 модели для каждого таргета. Для этого создали 4 датасета, каждый из которых включал в себя помимо первоначальных признаков, 3 оставшихся таргета. Мы выбрали данный подход, так как заметили сильную корреляцию между целевыми переменными на этапе обработки данных.
 ### 9. Получение предсказаний модели на тестовой выборке по самой популярной марки
 Были получены следующие результаты для таргетов:
-* химшлак последний Al2O3 
-  * $$r^2$$ $$-$$ score $$:$$ $$0.5962414407493948$$
+* химшлак последний Al2O3
+   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.5962414407493948">
 * химшлак последний CaO 
-  * $$r^2$$ $$-$$ score $$:$$ $$0.9205713725749756$$
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.920571372574975">
 * химшлак последний R
-  * $$r^2$$ $$-$$ score $$:$$ $$0.956619985481036$$
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.956619985481036">
 * химшлак последний SiO2
-  * $$r^2$$ $$-$$ score $$:$$ $$0.9478195883188777$$
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9478195883188777">
 ## Описание репозитория
 Репозиторий содержит в себе ноутбуки EDA.ipynb и GBR.ipynb. EDA.ipynb содержит в себе выполнение пунктов  1-6, GBR.ipynb выполнение пунктов 7-9.
 Каталог data содержит исходный датасет, и полученные в результате выполнения EDA.ipynb обучающую и тестовую выборки.
@@ -45,7 +45,7 @@
 Каталог models содержит сохраненные модели, для воспроизведения результата.
 ## Выводы по EDA
 * График распределения целевой переменной "химшлак последний Al2O3"
-![alt-текст](https://raw.githubusercontent.com/OnlyOneUseAcc/Evraz-SCC-prediction/master/source/target_range_1.png?token=AHSE7JNB3654E4G6UJT4RIDANDPBM "Al2O3")
+![alt-текст](https://raw.githubusercontent.com/OnlyOneUseAcc/Evraz-SCC-prediction/master/source/target_range_1.png?token=AHSE7JNN4FA5NOTLW4U6ZPTANDSZI "Al2O3")
 * График распределения целевой переменной "химшлак последний CaO"
 ![alt-текст](https://raw.githubusercontent.com/OnlyOneUseAcc/Evraz-SCC-prediction/master/source/target_range_2.png?token=AHSE7JM4VV2CRTCMPU6XYQLANDPEY "CaO")
 * График распределения целевой переменной "химшлак последний R"
