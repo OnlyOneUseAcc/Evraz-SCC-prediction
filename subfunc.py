@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
+from impyute.imputation.cs import mice
 
 from impyute.imputation.cs import mice
 
@@ -20,6 +21,7 @@ def date_to_interval(date_obj: pd.Series):
     interval[1:] = interval[1:].dt.total_seconds() // 60
     interval[0] = float(interval.mode())
     interval.name = 'Interval'
+    interval = pd.to_numeric(interval)
     return interval
 
 
@@ -110,6 +112,16 @@ def multi_model_load():
     with open('model/model.pkl', 'rb') as f:
         model = pickle.load(f)
     return model
+
+
+def fill_empty_values(data: pd.DataFrame):
+    imputed_training = mice(data.values)
+    empty_mask = data.isna()
+    data_array = data.values
+    data_array[empty_mask] = imputed_training[empty_mask]
+    return pd.DataFrame(data_array,
+                        columns=data.columns,
+                        index=data.index)
 
 
 def fill_empty_values(data: pd.DataFrame):
