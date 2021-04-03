@@ -4,15 +4,8 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
 from impyute.imputation.cs import mice
-from glob import glob
-import re
+from sklearn.ensemble import IsolationForest
 import os
-
-
-def replace_comma(data: pd.DataFrame):
-    data = data.apply(lambda x: x.apply(str).str.replace(',', '.'))
-    data = data.apply(lambda x: pd.to_numeric(x))
-    return data
 
 
 # Время изготовления одного сплава
@@ -75,12 +68,10 @@ def normalize_data(data):
 
 
 def remove_noises(data):
-    clear_data = data.copy()
-    for col in clear_data:
-        std = clear_data[col].std()
-        mean = clear_data[col].mean()
-        noise_indexes = clear_data[col][abs(clear_data[col]) > (mean + 3 * std)].index
-        clear_data = clear_data.drop(noise_indexes, axis='index')
+    out_forest = IsolationForest()
+    out_forest.fit(data)
+    outlier_predicted = out_forest.predict(data)
+    clear_data = data[outlier_predicted == 1].copy()
 
     return clear_data
 
