@@ -4,8 +4,9 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
 from impyute.imputation.cs import mice
-
-from impyute.imputation.cs import mice
+from glob import glob
+import re
+import os
 
 
 def replace_comma(data: pd.DataFrame):
@@ -65,7 +66,7 @@ def plot_feature_importance(model, data, title):
     plt.figure(figsize=(10, 5))
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
-    plt.savefig(f'source/{title}.png')
+    plt.savefig(f'source/f_i_{title}.png')
 
 
 def normalize_data(data):
@@ -85,21 +86,22 @@ def remove_noises(data):
 
 
 def show_result(predicted, target, path=None):
-    t_columns = target.columns
-    target = target.to_numpy()
-    for i in range(predicted.shape[1]):
-        plt.figure(figsize=(50, 10))
-        plt.title(t_columns[i])
-        plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
-                 target[::10, i], c='b', label='Целевая'
-                 )
-
-        plt.plot(np.linspace(0, predicted[::10].shape[0], num=predicted[::10].shape[0]),
-                 predicted[::10, i], c='g', label='Предсказанная')
-        plt.legend()
-
-        if path is not None:
-            plt.savefig(f'{path}{i}.png')
+    fig, axes = plt.subplots(4, figsize=(15, 30))
+    keys = list(target.keys())
+    for index in range(len(keys)):
+        axes[index].set_title(keys[index])
+        axes[index].plot(np.linspace(0, predicted.iloc[::10, index].shape[0],
+                                     num=predicted.iloc[::10, index].shape[0]),
+                         target[keys[index]][::10],
+                         label='Целевая'
+                         )
+        axes[index].plot(np.linspace(0, predicted.iloc[::10, index].shape[0],
+                                     num=predicted.iloc[::10, index].shape[0]),
+                         predicted.iloc[::10, predicted.columns.to_list().index(keys[index])],
+                         label='Предсказанная')
+        axes[index].legend(borderpad=1, shadow=True, bbox_to_anchor=(1, 1))
+    if path is not None:
+        plt.savefig(path)
 
 
 def multi_model_save(models):
@@ -108,10 +110,13 @@ def multi_model_save(models):
             pickle.dump(models[target], f)
 
 
-def multi_model_load():
-    with open('model/model.pkl', 'rb') as f:
-        model = pickle.load(f)
-    return model
+def models_load():
+    models = {}
+    for root, dirs, files in os.walk("model/", topdown=False):
+        for file_name in files:
+            with open(os.path.join('model/', file_name), 'rb') as file:
+                models[file_name.split('.')[0]] = pickle.load(file)
+    return models
 
 
 def fill_empty_values(data: pd.DataFrame):
@@ -119,37 +124,26 @@ def fill_empty_values(data: pd.DataFrame):
     empty_mask = data.isna()
     data_array = data.values
     data_array[empty_mask] = imputed_training[empty_mask]
-    return pd.DataFrame(data_array,
-                        columns=data.columns,
-                        index=data.index)
-
-
-def fill_empty_values(data: pd.DataFrame):
-    imputed_training = mice(data.values)
-    empty_mask = data.isna()
-    data_array = data.values
-    data_array[empty_mask] = imputed_training[empty_mask]
-    print(data_array)
     return pd.DataFrame(data_array,
                         columns=data.columns,
                         index=data.index)
 
 
 def select_target(X_train, X_test, y_train, y_test):
-
     X_train_dataset = {}
     X_test_dataset = {}
     y_train_dataset = {}
     y_test_dataset = {}
+
     X_test[y_test.columns] = y_test
     X_train[y_train.columns] = y_train
-    combs = combinations(y_train.columns, 3)
 
+    combs = combinations(y_train.columns, 3)
     for comb in combs:
         target = list(set(y_train.columns) - set(comb))[0]
         y_train_dataset[target] = y_train[target]
         y_test_dataset[target] = y_test[target]
-        X_test_dataset[target] = X_test.drop(columns = target)
-        X_train_dataset[target] = X_train.drop(columns = target)
+        X_test_dataset[target] = X_test.drop(columns=target)
+        X_train_dataset[target] = X_train.drop(columns=target)
 
     return X_train_dataset, X_test_dataset, y_train_dataset, y_test_dataset
