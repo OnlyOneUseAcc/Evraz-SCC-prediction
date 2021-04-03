@@ -57,9 +57,10 @@ def mean_filling(data: pd.DataFrame, usefull_list, group_list):
     return full_data
 
 
-def plot_feature_importance(model, data, target_index, title):
-    feature_importance = model.estimators_[target_index].feature_importances_
+def plot_feature_importance(model, data, title):
+    feature_importance = model.feature_importances_
     feat_importance = pd.Series(feature_importance, index=data.columns)
+    plt.figure(figsize=(10, 5))
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
     plt.savefig(f'source/{title}.png')
@@ -99,9 +100,10 @@ def show_result(predicted, target, path=None):
             plt.savefig(f'{path}{i}.png')
 
 
-def multi_model_save(model):
-    with open('model/model.pkl', 'wb') as f:
-        pickle.dump(model, f)
+def multi_model_save(models):
+    for target in models.keys():
+        with open(f'model/{target}.pkl', 'wb') as f:
+            pickle.dump(models[target], f)
 
 
 def multi_model_load():
@@ -119,3 +121,23 @@ def fill_empty_values(data: pd.DataFrame):
     return pd.DataFrame(data_array,
                         columns=data.columns,
                         index=data.index)
+
+
+def select_target(X_train, X_test, y_train, y_test):
+
+    X_train_dataset = {}
+    X_test_dataset = {}
+    y_train_dataset = {}
+    y_test_dataset = {}
+    X_test[y_test.columns] = y_test
+    X_train[y_train.columns] = y_train
+    combs = combinations(y_train.columns, 3)
+
+    for comb in combs:
+        target = list(set(y_train.columns) - set(comb))[0]
+        y_train_dataset[target] = y_train[target]
+        y_test_dataset[target] = y_test[target]
+        X_test_dataset[target] = X_test.drop(columns = target)
+        X_train_dataset[target] = X_train.drop(columns = target)
+
+    return X_train_dataset, X_test_dataset, y_train_dataset, y_test_dataset
