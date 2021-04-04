@@ -6,6 +6,8 @@ import pickle
 from impyute.imputation.cs import mice
 from sklearn.ensemble import IsolationForest
 import os
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.feature_selection import SelectFromModel
 
 
 # Время изготовления одного сплава
@@ -81,24 +83,24 @@ def show_result(predicted, target, path=None):
     keys = list(target.keys())
     for index in range(len(keys)):
         axes[index].set_title(keys[index])
-        axes[index].plot(np.linspace(0, predicted.iloc[::10, index].shape[0],
-                                     num=predicted.iloc[::10, index].shape[0]),
-                         target[keys[index]][::10],
+        axes[index].plot(np.linspace(0, predicted.iloc[::5, index].shape[0],
+                                     num=predicted.iloc[::5, index].shape[0]),
+                         target[keys[index]][::5],
                          label='Целевая'
                          )
-        axes[index].plot(np.linspace(0, predicted.iloc[::10, index].shape[0],
-                                     num=predicted.iloc[::10, index].shape[0]),
-                         predicted.iloc[::10, predicted.columns.to_list().index(keys[index])],
-                         label='Предсказанная')
+        axes[index].plot(np.linspace(0, predicted.iloc[::5, index].shape[0],
+                                     num=predicted.iloc[::5, index].shape[0]),
+                         predicted.iloc[::5, predicted.columns.to_list().index(keys[index])],
+                         label='Предсказанная', alpha=0.75)
         axes[index].legend(borderpad=1, shadow=True, bbox_to_anchor=(1, 1))
     if path is not None:
         plt.savefig(path)
 
 
-def multi_model_save(models):
-    for target in models.keys():
-        with open(f'model/{target}.pkl', 'wb') as f:
-            pickle.dump(models[target], f)
+def models_save(models):
+    for key in models.keys():
+        with open(f'model/{key}.pkl', 'wb') as f:
+            pickle.dump(models[key], f)
 
 
 def models_load():
@@ -138,3 +140,16 @@ def select_target(X_train, X_test, y_train, y_test):
         X_train_dataset[target] = X_train.drop(columns=target)
 
     return X_train_dataset, X_test_dataset, y_train_dataset, y_test_dataset
+
+
+def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
+    regressor = ExtraTreesRegressor(n_estimators=350, n_jobs=2)
+    regressor.fit(X, Y)
+    filter_model = SelectFromModel(regressor, prefit=True)
+
+    feature_indexes = filter_model.get_support()
+    feature_names = X.columns[feature_indexes]
+    data = pd.DataFrame(filter_model.transform(X), columns=feature_names, index=X.index)
+    print(f'удалили признаков: {X.shape[1] - data.shape[1]}')
+    data[Y.columns] = Y
+    return data
