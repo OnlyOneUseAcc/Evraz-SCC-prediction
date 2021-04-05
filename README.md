@@ -31,16 +31,16 @@
 ### 9. Получение предсказаний модели на тестовой выборке по самой популярной марки
 Были получены следующие результаты для таргетов:
 * химшлак последний Al2O3
-  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.5962414407493948">
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.625318310066501">
    ![Image](source/f_i_химшлак_последний_Al2O3.png?raw=true)
 * химшлак последний CaO 
-  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.920571372574975">
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9165382003515771">
    ![Image](source/f_i_химшлак_последний_CaO.png?raw=true)
 * химшлак последний R
-  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.956619985481036">
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9558793235458077">
   ![Image](source/f_i_химшлак_последний_R.png?raw=true)
 * химшлак последний SiO2
-  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9478195883188777">
+  * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9404653019707947">
   ![Image](source/f_i_химшлак_последний_SiO2.png?raw=true)
  ![Image](source/prediction_result.png?raw=true)
 ## Описание репозитория
