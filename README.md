@@ -4,7 +4,6 @@
 ## План работ
 ### 1. Сделать EDA (exploratory data analysis):
  * Пропуски
- * Нули
  * Выбросы
  * Дисперсия
 
@@ -18,6 +17,7 @@
 
 ### 3. Заполнение пропущенных значений
 * Заполнение с помощью метода MICE (Multiple Imputation by Chained Equations)
+![Image](source/nan.png?raw=true)
 
 ### 4. Нормализация вещественных признаков
 ### 5. Разбиение датасета  на обучающую и тестовую выборки
@@ -32,14 +32,17 @@
 Были получены следующие результаты для таргетов:
 * химшлак последний Al2O3
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.5962414407493948">
-  * ![Image](source/f_i_химшлак последний Al2O3.png?raw=true)
+   ![Image](source/f_i_химшлак_последний_Al2O3.png?raw=true)
 * химшлак последний CaO 
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.920571372574975">
+   ![Image](source/f_i_химшлак_последний_CaO.png?raw=true)
 * химшлак последний R
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.956619985481036">
+  ![Image](source/f_i_химшлак_последний_R.png?raw=true)
 * химшлак последний SiO2
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9478195883188777">
-  
+  ![Image](source/f_i_химшлак_последний_SiO2.png?raw=true)
+ ![Image](source/prediction_result.png?raw=true)
 ## Описание репозитория
 Репозиторий содержит в себе ноутбуки EDA.ipynb и GBR.ipynb. EDA.ipynb содержит в себе выполнение пунктов  1-6, GBR.ipynb выполнение пунктов 7-9.
 Каталог data содержит исходный датасет, и полученные в результате выполнения EDA.ipynb обучающую и тестовую выборки.
@@ -58,3 +61,7 @@
 ![Image](source/correletion_map.png?raw=true)
 * График корреляции между таргетами
 ![Image](source/correletion_map_target.png?raw=true)
+* Дисперсия признакового пространства до обработки 
+![Image](source/dispersion_bar_preprocessing.png?raw=true)
+* Дисперсия признакового пространства после обработки
+![Image](source/dispersion_bar_postprocessing.png?raw=true)
