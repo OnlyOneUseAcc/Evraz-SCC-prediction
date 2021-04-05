@@ -35,14 +35,14 @@
    ![Image](source/f_i_химшлак_последний_Al2O3.png?raw=true)
 * химшлак последний CaO 
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9165382003515771">
-   ![Image](source/f_i_химшлак_последний_CaO.png?raw=true)
+  ![Image](source/f_i_химшлак_последний_CaO.png?raw=true)
 * химшлак последний R
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9558793235458077">
   ![Image](source/f_i_химшлак_последний_R.png?raw=true)
 * химшлак последний SiO2
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9404653019707947">
   ![Image](source/f_i_химшлак_последний_SiO2.png?raw=true)
- ![Image](source/prediction_result.png?raw=true)
+  ![Image](source/prediction_result.png?raw=true)
 ## Описание репозитория
 Репозиторий содержит в себе ноутбуки EDA.ipynb и GBR.ipynb. EDA.ipynb содержит в себе выполнение пунктов  1-6, GBR.ipynb выполнение пунктов 7-9.
 Каталог data содержит исходный датасет, и полученные в результате выполнения EDA.ipynb обучающую и тестовую выборки.

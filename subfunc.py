@@ -35,7 +35,7 @@ def drop_columns(data: pd.DataFrame, threshold=0.85):
 def plot_feature_importance(model, data, title):
     feature_importance = model.feature_importances_
     feat_importance = pd.Series(feature_importance, index=data.columns)
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(18, 9))
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
     plt.savefig(f"source/f_i_{title.replace(' ', '_')}.png")
