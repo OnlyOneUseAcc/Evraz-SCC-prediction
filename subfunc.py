@@ -32,36 +32,13 @@ def drop_columns(data: pd.DataFrame, threshold=0.85):
     return data_dropped
 
 
-def drop_rows(data: pd.DataFrame, threshold=0.35):
-    nan_count_per_row = data.isnull().sum(axis=1)
-    indexes_to_delete = []
-    for index in nan_count_per_row.index:
-        if nan_count_per_row.loc[index] / data.shape[1] > threshold:
-            indexes_to_delete.append(index)
-
-    return data.drop(indexes_to_delete, axis='index')
-
-
-def mean_filling(data: pd.DataFrame, usefull_list, group_list):
-    full_data = data.copy()
-
-    for count in range(1, len(group_list)):
-        for comb in combinations(group_list, count):
-            full_data[usefull_list] = full_data.groupby(list(comb))[usefull_list].transform(
-                lambda column: column.fillna(column.mean()))
-
-    full_data = full_data.fillna(full_data.mean(axis=0))
-
-    return full_data
-
-
 def plot_feature_importance(model, data, title):
     feature_importance = model.feature_importances_
     feat_importance = pd.Series(feature_importance, index=data.columns)
     plt.figure(figsize=(10, 5))
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
-    plt.savefig(f'source/f_i_{title}.png')
+    plt.savefig(f"source/f_i_{title.replace(' ', '_')}.png")
 
 
 def normalize_data(data):
@@ -143,13 +120,14 @@ def select_target(X_train, X_test, y_train, y_test):
 
 
 def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
-    regressor = ExtraTreesRegressor(n_estimators=350, n_jobs=2)
+    regressor = ExtraTreesRegressor(n_estimators=350, n_jobs=2, random_state=21)
     regressor.fit(X, Y)
-    filter_model = SelectFromModel(regressor, prefit=True)
+
+    filter_model = SelectFromModel(regressor, prefit=True, threshold=12e-3)
 
     feature_indexes = filter_model.get_support()
     feature_names = X.columns[feature_indexes]
     data = pd.DataFrame(filter_model.transform(X), columns=feature_names, index=X.index)
     print(f'удалили признаков: {X.shape[1] - data.shape[1]}')
     data[Y.columns] = Y
-    return data
+    return data, pd.Series(regressor.feature_importances_, index=X.columns)
