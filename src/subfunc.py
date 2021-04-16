@@ -131,3 +131,21 @@ def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
     print(f'удалили признаков: {X.shape[1] - data.shape[1]}')
     data[Y.columns] = Y
     return data, pd.Series(regressor.feature_importances_, index=X.columns)
+
+
+def save_obj(obj, path):
+    with open(f'{path}.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+
+def load_obj(path):
+    with open(f'{path}.pkl', 'rb') as f:
+        return pickle.load(f)
+
+
+def to_categorical(df, target, q, path):
+    cat_target = pd.qcut(df[target], q)
+    mask = {cat: i for i, cat in enumerate(cat_target.unique())}
+    cat_target = cat_target.replace(mask)
+    save_obj(mask, path)
+    return cat_target
