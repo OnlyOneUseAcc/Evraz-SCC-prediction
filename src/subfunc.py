@@ -6,6 +6,7 @@ import pickle
 from impyute.imputation.cs import mice
 from sklearn.ensemble import IsolationForest
 import os
+import re
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
 
@@ -131,3 +132,19 @@ def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
     print(f'удалили признаков: {X.shape[1] - data.shape[1]}')
     data[Y.columns] = Y
     return data, pd.Series(regressor.feature_importances_, index=X.columns)
+
+
+def split_substnce(data, elements_data):
+    aug_data = data.copy()
+    for col in elements_data.columns[1:]:
+        elements = elements_data[col][elements_data[col] != 0].index
+        part_of_name_col = re.match(r'([а-я]|[А-Я]|\s)+', col)
+        if part_of_name_col is None:
+            continue
+        for element in elements:
+            name_col = f'{part_of_name_col.group(0)} {element}'
+            if name_col in aug_data.columns:
+                aug_data[name_col] += aug_data[col] * elements_data.loc[element, col]
+            else:
+                aug_data[name_col] = aug_data[col] * elements_data.loc[element, col]
+    return aug_data
