@@ -30,7 +30,7 @@ def drop_columns(data: pd.DataFrame, threshold=0.85):
             dropped_col.append(col)
 
     print(f"Удаленные колонки: {', '.join(dropped_col)}")
-    return data_dropped
+    return data_dropped, dropped_col
 
 
 def plot_feature_importance(model, data, title):
@@ -124,7 +124,7 @@ def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
     regressor = ExtraTreesRegressor(n_estimators=350, n_jobs=2, random_state=21)
     regressor.fit(X, Y)
 
-    filter_model = SelectFromModel(regressor, prefit=True, threshold=12e-3)
+    filter_model = SelectFromModel(regressor, prefit=True, threshold=600e-5)
 
     feature_indexes = filter_model.get_support()
     feature_names = X.columns[feature_indexes]
@@ -132,7 +132,6 @@ def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
     print(f'удалили признаков: {X.shape[1] - data.shape[1]}')
     data[Y.columns] = Y
     return data, pd.Series(regressor.feature_importances_, index=X.columns)
-
 
 
 def save_obj(obj, path):
@@ -146,7 +145,7 @@ def load_obj(path):
 
 
 def to_categorical(df, target, q, path):
-    cat_target = pd.qcut(df[target], q)
+    cat_target = pd.qcut(df[target[0]], q)
     mask = {cat: i for i, cat in enumerate(cat_target.unique())}
     cat_target = cat_target.replace(mask)
     save_obj(mask, path)
@@ -164,7 +163,7 @@ def to_numerical(targets, dict):
 
 def split_substnce(data, elements_data):
     aug_data = data.copy()
-    for col in elements_data.columns[1:]:
+    for col in elements_data.columns:
         elements = elements_data[col][elements_data[col] != 0].index
         part_of_name_col = re.match(r'([а-я]|[А-Я]|\s)+', col)
         if part_of_name_col is None:
