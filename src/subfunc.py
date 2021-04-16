@@ -149,3 +149,12 @@ def to_categorical(df, target, q, path):
     cat_target = cat_target.replace(mask)
     save_obj(mask, path)
     return cat_target
+
+
+def to_numerical(targets, dict):
+    numerical_targets = []
+    for i, target in enumerate(targets):
+        for key in dict.keys():
+            if target == dict[key]:
+                numerical_targets.append(key.right - abs(key.left))
+    return np.array(numerical_targets)
