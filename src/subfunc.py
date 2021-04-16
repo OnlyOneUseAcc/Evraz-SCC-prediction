@@ -82,9 +82,9 @@ def models_save(models):
 
 def models_load():
     models = {}
-    for root, dirs, files in os.walk("model/", topdown=False):
+    for root, dirs, files in os.walk("../model/", topdown=False):
         for file_name in files:
-            with open(os.path.join('model/', file_name), 'rb') as file:
+            with open(os.path.join('../model/', file_name), 'rb') as file:
                 models[file_name.split('.')[0]] = pickle.load(file)
     return models
 
