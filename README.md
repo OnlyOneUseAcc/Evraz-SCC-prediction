@@ -17,7 +17,7 @@
 
 ### 3. Заполнение пропущенных значений
 * Заполнение с помощью метода MICE (Multiple Imputation by Chained Equations)
-![Image](source/nan.png?raw=true)
+![Image](source/qual/nan.png?raw=true)
 
 ### 4. Нормализация вещественных признаков
 ### 5. Разбиение датасета  на обучающую и тестовую выборки
@@ -33,22 +33,21 @@
 Были получены следующие результаты для таргетов:
 * химшлак последний Al2O3
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.625318310066501">
-   ![Image](source/f_i_химшлак_последний_Al2O3.png?raw=true)
+   ![Image](source/qual/f_i_химшлак_последний_Al2O3.png?raw=true)
 * химшлак последний CaO 
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9165382003515771">
-  ![Image](source/f_i_химшлак_последний_CaO.png?raw=true)
+  ![Image](source/qual/f_i_химшлак_последний_CaO.png?raw=true)
 * химшлак последний R
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9558793235458077">
-  ![Image](source/f_i_химшлак_последний_R.png?raw=true)
+  ![Image](source/qual/f_i_химшлак_последний_R.png?raw=true)
 * химшлак последний SiO2
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9404653019707947">
-  ![Image](source/f_i_химшлак_последний_SiO2.png?raw=true)
+  ![Image](source/qual/f_i_химшлак_последний_SiO2.png?raw=true)
   ![Image](source/qual/prediction_result.png?raw=true)
 ## Описание репозитория
-Репозиторий содержит в себе ноутбуки EDA.ipynb и GBR.ipynb. EDA.ipynb содержит в себе выполнение пунктов  1-6, GBR.ipynb выполнение пунктов 7-9.
+Репозиторий содержит в себе папку src, где хранятся папки для отборочного и финального тура. EDA.ipynb содержит в себе выполнение пунктов  1-6, GBR.ipynb выполнение пунктов 7-9.
 Каталог data содержит исходный датасет, и полученные в результате выполнения EDA.ipynb обучающую и тестовую выборки.
 Каталог source содержит графики, полученные при анализе данных.
-Каталог models содержит сохраненные модели, для воспроизведения результата.
 ## Выводы по EDA
 * График распределения целевой переменной "химшлак последний Al2O3"
 ![Image](source/qual/target_range_1.png?raw=true)
@@ -66,3 +65,17 @@
 ![Image](source/qual/dispersion_bar_preprocessing.png?raw=true)
 * Дисперсия признакового пространства после обработки
 ![Image](source/qual/dispersion_bar_postprocessing.png?raw=true)
+
+## Финальный тур
+* График корреляции между целевой переменной и признаками
+![Image](source/final_stage/correlation_target_map.png?raw=true)
+* График предсказанных значений, используя LinearRegression
+![Image](source/final_stage/linear_prediction.png?raw=true)
+* График предсказанных значений, используя GBR
+![Image](source/final_stage/GBR_prediction.png?raw=true)
+* График предсказанных значений, используя CatBoostRegressor
+![Image](source/final_stage/CatBoost_prediction.png?raw=true)
+  
+## Обертка
+Мы обернули обученную модель в чат-бота Telegram. О нем вы можете узнать больше,
+посетив [эту страницу](https://github.com/Vas9ka/Evraz_predict_bot)
