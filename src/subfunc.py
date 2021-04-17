@@ -9,7 +9,29 @@ import os
 import re
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score, mean_absolute_error
 
+def get_scores(models, y_test, X_test):
+    r2_scores = np.zeros(3)
+    mse_scores = np.zeros(3)
+    mae_scores = np.zeros(3)
+    mape_scores = np.zeros(3)
+    params = []
+    params.append(None)
+    for ix, model in enumerate(models):
+        r2_scores[ix] = r2_score(y_test, models[model].predict(X_test))
+        mse_scores[ix] = mean_squared_error(y_test, models[model].predict(X_test))
+        mae_scores[ix] = mean_absolute_error(y_test, models[model].predict(X_test))
+        mape_scores[ix] = MAPE(y_test.to_numpy(), models[model].predict(X_test))
+        if ix > 0:
+            params.append(models[model].get_params())
+    scores = pd.DataFrame(index=models.keys(), columns=['R2', 'MAE', 'MSE', 'MAPe'])
+    scores['R2'] = r2_scores
+    scores['MAE'] = mae_scores
+    scores['MSE'] = mse_scores
+    scores['MAPe'] = mape_scores
+    scores['Best params'] = params
+    return scores
 
 # Время изготовления одного сплава
 def date_to_interval(date_obj: pd.Series):
@@ -21,6 +43,9 @@ def date_to_interval(date_obj: pd.Series):
     interval = pd.to_numeric(interval)
     return interval
 
+def MAPE(Y_actual,Y_Predicted):
+    mape = np.mean(np.abs((Y_actual - Y_Predicted)/Y_actual))*100
+    return mape
 
 def drop_columns(data: pd.DataFrame, threshold=0.85):
     data_dropped = data[[column for column in data if data[column].count() / len(data) >= threshold]]
