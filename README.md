@@ -43,7 +43,7 @@
 * химшлак последний SiO2
   * <img src="https://render.githubusercontent.com/render/math?math=r^{2}\  score = 0.9404653019707947">
   ![Image](source/f_i_химшлак_последний_SiO2.png?raw=true)
-  ![Image](source/prediction_result.png?raw=true)
+  ![Image](source/qual/prediction_result.png?raw=true)
 ## Описание репозитория
 Репозиторий содержит в себе ноутбуки EDA.ipynb и GBR.ipynb. EDA.ipynb содержит в себе выполнение пунктов  1-6, GBR.ipynb выполнение пунктов 7-9.
 Каталог data содержит исходный датасет, и полученные в результате выполнения EDA.ipynb обучающую и тестовую выборки.
@@ -51,18 +51,18 @@
 Каталог models содержит сохраненные модели, для воспроизведения результата.
 ## Выводы по EDA
 * График распределения целевой переменной "химшлак последний Al2O3"
-![Image](source/target_range_1.png?raw=true)
+![Image](source/qual/target_range_1.png?raw=true)
 * График распределения целевой переменной "химшлак последний CaO"
-![Image](source/target_range_2.png?raw=true)
+![Image](source/qual/target_range_2.png?raw=true)
 * График распределения целевой переменной "химшлак последний R"
-![Image](source/target_range_3.png?raw=true)
+![Image](source/qual/target_range_3.png?raw=true)
 * График распределения целевой переменной "химшлак последний SiO2"
-![Image](source/target_range_4.png?raw=true)
+![Image](source/qual/target_range_4.png?raw=true)
 * График корреляций между признаками
-![Image](source/correletion_map.png?raw=true)
+![Image](source/qual/correletion_map.png?raw=true)
 * График корреляции между таргетами
-![Image](source/correletion_map_target.png?raw=true)
+![Image](source/qual/correletion_map_target.png?raw=true)
 * Дисперсия признакового пространства до обработки 
-![Image](source/dispersion_bar_preprocessing.png?raw=true)
+![Image](source/qual/dispersion_bar_preprocessing.png?raw=true)
 * Дисперсия признакового пространства после обработки
-![Image](source/dispersion_bar_postprocessing.png?raw=true)
+![Image](source/qual/dispersion_bar_postprocessing.png?raw=true)

@@ -10,6 +10,8 @@ import re
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score, mean_absolute_error
+import catboost
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 
 def get_scores(models, y_test, X_test):
     r2_scores = np.zeros(3)
@@ -43,9 +45,6 @@ def date_to_interval(date_obj: pd.Series):
     interval = pd.to_numeric(interval)
     return interval
 
-def MAPE(Y_actual,Y_Predicted):
-    mape = np.mean(np.abs((Y_actual - Y_Predicted)/Y_actual))*100
-    return mape
 
 def drop_columns(data: pd.DataFrame, threshold=0.85):
     data_dropped = data[[column for column in data if data[column].count() / len(data) >= threshold]]
@@ -149,7 +148,7 @@ def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
     regressor = ExtraTreesRegressor(n_estimators=350, n_jobs=2, random_state=21)
     regressor.fit(X, Y)
 
-    filter_model = SelectFromModel(regressor, prefit=True, threshold=600e-5)
+    filter_model = SelectFromModel(regressor, prefit=True, threshold=3e-3)
 
     feature_indexes = filter_model.get_support()
     feature_names = X.columns[feature_indexes]
@@ -157,6 +156,68 @@ def filter_features(X: pd.DataFrame, Y: pd.DataFrame):
     print(f'удалили признаков: {X.shape[1] - data.shape[1]}')
     data[Y.columns] = Y
     return data, pd.Series(regressor.feature_importances_, index=X.columns)
+
+
+def fill_future_columns(X_train, X_test, y_train, y_test, future_column):
+    future_column_list = future_column.copy()
+    while len(future_column_list) != 0:
+        prediction_result = {}
+        for column in future_column_list:
+            cur_eval_data = catboost.Pool(X_test, y_test[column])
+            cur_model = catboost.CatBoostRegressor(iterations=1000,
+                                                   learning_rate=0.05,
+                                                   task_type='GPU',
+                                                   loss_function='MAE',
+                                                   random_seed=42)
+            cur_model.fit(X_train, y_train[column],
+                          use_best_model=True,
+                          early_stopping_rounds=100,
+                          eval_set=cur_eval_data,
+                          silent=True)
+            prediction_result[column] = [cur_model.copy(), r2_score(
+                y_pred=cur_model.predict(X_test), y_true=y_test[column])]
+        best_r2 = -20
+        best_target = ''
+        for key in prediction_result.keys():
+            if prediction_result[key][1] > best_r2:
+                best_r2 = prediction_result[key][1]
+                best_target = key
+        if prediction_result[best_target][1] > 0.5:  # перестаем добавлять новые признаки если плохо предсказываем их
+            print(f'for column {best_target}: {best_r2}')
+            X_train[best_target] = prediction_result[best_target][0].predict(X_train)
+            X_test[best_target] = prediction_result[best_target][0].predict(X_test)
+        else:
+            break
+        future_column_list.remove(best_target)
+    return X_train, X_test
+
+
+def MAPE(y_true, y_pred):
+    mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+    return mape
+
+
+def get_report(models_dict, target_columns_list, X_test, y_test):
+    r2_scores = np.zeros(4)
+    mae_scores = np.zeros(4)
+    mape_scores = np.zeros(4)
+    mse_scores = np.zeros(4)
+    for itarget, target in enumerate(target_columns_list):
+        r2_scores[itarget] = r2_score(y_true=y_test[target],
+                                      y_pred=models_dict[target].predict(X_test))
+        mse_scores[itarget] = mean_squared_error(y_true=y_test[target],
+                                                 y_pred=models_dict[target].predict(X_test))
+        mape_scores[itarget] = MAPE(y_test[target],
+                                    models_dict[target].predict(X_test))
+        mae_scores[itarget] = mean_absolute_error(y_true=y_test[target],
+                                                  y_pred=models_dict[target].predict(X_test))
+
+    scores = pd.DataFrame(index=target_columns_list, columns=['R2', 'MAE', 'MSE', 'MAPe'])
+    scores['R2'] = r2_scores
+    scores['MAE'] = mae_scores
+    scores['MSE'] = mse_scores
+    scores['MAPe'] = mape_scores
+    return scores
 
 
 def save_obj(obj, path):
