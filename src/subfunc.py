@@ -29,7 +29,7 @@ def drop_columns(data: pd.DataFrame, threshold=0.85):
             dropped_col.append(col)
 
     print(f"Удаленные колонки: {', '.join(dropped_col)}")
-    return data_dropped,dropped_col
+    return data_dropped, dropped_col
 
 
 def plot_feature_importance(model, data, title):
