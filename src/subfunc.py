@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
 from impyute.imputation.cs import mice
-from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
 import os
 import re
 from sklearn.ensemble import ExtraTreesRegressor
@@ -33,13 +33,13 @@ def drop_columns(data: pd.DataFrame, threshold=0.85):
     return data_dropped, dropped_col
 
 
-def plot_feature_importance(model, data, title):
+def plot_feature_importance(model, data, title, dir):
     feature_importance = model.feature_importances_
     feat_importance = pd.Series(feature_importance, index=data.columns)
     plt.figure(figsize=(18, 9))
     feat_importance.nlargest(15).plot(kind='barh')
     plt.title(title)
-    plt.savefig(f"source/f_i_{title.replace(' ', '_')}.png")
+    plt.savefig(f"../../source/{dir}f_i_{title.replace(' ', '_')}.png")
 
 
 def normalize_data(data):
@@ -48,9 +48,9 @@ def normalize_data(data):
 
 
 def remove_noises(data):
-    out_forest = IsolationForest()
-    out_forest.fit(data)
-    outlier_predicted = out_forest.predict(data)
+    lof = LocalOutlierFactor(n_neighbors=15, novelty=True)
+    lof.fit(data)
+    outlier_predicted = lof.predict(data)
     clear_data = data[outlier_predicted == 1].copy()
 
     return clear_data
