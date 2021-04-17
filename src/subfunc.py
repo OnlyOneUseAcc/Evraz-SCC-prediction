@@ -1,17 +1,17 @@
-import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-from itertools import combinations
-import pickle
-from impyute.imputation.cs import mice
-from sklearn.neighbors import LocalOutlierFactor
 import os
+import pickle
 import re
+from itertools import combinations
+import catboost
+import numpy as np
+import pandas as pd
+from impyute.imputation.cs import mice
+from matplotlib import pyplot as plt
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
-from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score, mean_absolute_error
-import catboost
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from sklearn.neighbors import LocalOutlierFactor
+
 
 def get_scores(models, y_test, X_test):
     r2_scores = np.zeros(3)
@@ -34,6 +34,7 @@ def get_scores(models, y_test, X_test):
     scores['MAPe'] = mape_scores
     scores['Best params'] = params
     return scores
+
 
 # Время изготовления одного сплава
 def date_to_interval(date_obj: pd.Series):
