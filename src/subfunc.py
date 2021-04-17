@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import pickle
 from impyute.imputation.cs import mice
-from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
 import os
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
@@ -29,7 +29,7 @@ def drop_columns(data: pd.DataFrame, threshold=0.85):
             dropped_col.append(col)
 
     print(f"Удаленные колонки: {', '.join(dropped_col)}")
-    return data_dropped
+    return data_dropped,dropped_col
 
 
 def plot_feature_importance(model, data, title):
@@ -47,11 +47,10 @@ def normalize_data(data):
 
 
 def remove_noises(data):
-    out_forest = IsolationForest()
-    out_forest.fit(data)
-    outlier_predicted = out_forest.predict(data)
+    lof = LocalOutlierFactor(n_neighbors=10, novelty=True)
+    lof.fit(data)
+    outlier_predicted = lof.predict(data)
     clear_data = data[outlier_predicted == 1].copy()
-
     return clear_data
 
 
